@@ -15,3 +15,6 @@
 
 (defn business-day? [date & calendars]
   (apply calenjars/business-day? date calendars))
+
+(defn apply-date-rules [date date-rules & calendars]
+  (apply calenjars/apply-date-rules date date-rules calendars))

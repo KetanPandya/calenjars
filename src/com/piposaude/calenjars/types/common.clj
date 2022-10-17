@@ -29,7 +29,9 @@
   ([name day month year]
    (holiday name day month year false))
   ([name day month year exception?]
+   (holiday name day month year exception? []))
+  ([name day month year exception? rules]
    (let [formatted-month (format-month month)
          formatted-day (pad-with-zero day)
          yyyy-mmm-dd (format "%s-%s-%s" year formatted-month formatted-day)]
-     {:name name :date (t/date yyyy-mmm-dd) :exception? exception?})))
+     {:name name :date (t/date yyyy-mmm-dd) :exception? exception? :date-rules (vec rules)})))

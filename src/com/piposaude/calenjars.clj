@@ -1,20 +1,11 @@
 (ns com.piposaude.calenjars
   (:require [tick.alpha.api :as t]
             [clojure.java.io :as io]
-            [clojure.string :as str])
-  (:import (java.time LocalDate LocalDateTime)))
+            [clojure.string :as str]
+            [com.piposaude.calenjars.date-rules :as dr]
+            [com.piposaude.calenjars.calendars :as cal]))
 
 (def WEEKEND-FILE-NAME "WEEKEND")
-
-(def units #{:days :weeks :months :years :business-days})
-
-(defn- validate-input [date n unit]
-  (when-not (or (instance? LocalDate date) (instance? LocalDateTime date))
-    (throw (IllegalArgumentException. (str "Illegal date: " date))))
-  (when-not (integer? n)
-    (throw (IllegalArgumentException. (str "Illegal n: " n))))
-  (when-not (contains? units unit)
-    (throw (IllegalArgumentException. (str "Unrecognized unit: " unit)))))
 
 (def read-calendar
   (memoize
@@ -35,68 +26,40 @@
           sort
           dedupe))))
 
-(defn- sign [n]
-  (if (pos? n) 1 -1))
-
-(defn- get-step [n]
-  (if (zero? n)
-    0
-    (sign n)))
-
-(defn- abs [x]
-  (if pos? x (- x)))
-
-(defn- is-date-in-list? [date list]
-  (boolean (some #{(t/date date)} list)))
-
-(defn- inc-unless-holiday [date non-business-days days-added n]
-  (if (is-date-in-list? date non-business-days)
-    days-added
-    (+ days-added (sign n))))
-
-(defn- add-with-calendars [date n calendars]
-  (let [non-business-days (read-calendars (set (conj calendars WEEKEND-FILE-NAME)))
-        step (t/new-period (get-step n) :days)]
-    (if (= n 0)
-      (if (is-date-in-list? date non-business-days)
-        (add-with-calendars date 1 calendars)
-        date)
-      (loop [candidate date
-             days-added 0]
-        (if (= (abs n) days-added)
-          candidate
-          (let [new-date (t/+ candidate step)
-                m (inc-unless-holiday new-date non-business-days days-added n)]
-            (recur new-date m)))))))
-
-(defn relative-date-add [date n unit & calendars]
+(defn relative-date-add
   "Adds n 'unit's to date and returns a new date
-
   date must be an instance of java.time.LocalDate
   or java.time.LocalDateTime, n must be an integer
   and valid units are found in the units set"
-  (validate-input date n unit)
-  (if (= unit :business-days)
-    (add-with-calendars date n calendars)
-    (t/+ date (t/new-period n unit))))
+  [date n unit & calendars]
+  (cal/relative-date-add date n unit (read-calendars (set (conj calendars WEEKEND-FILE-NAME)))))
 
-(defn weekend? [date]
+(defn weekend?
   "Returns true only if date is in a weekend"
-  (let [weekend-days (read-calendar WEEKEND-FILE-NAME)]
-    (is-date-in-list? date weekend-days)))
+  [date]
+  (cal/weekend? date (read-calendar WEEKEND-FILE-NAME)))
 
-(defn holiday? [date calendar]
+(defn holiday?
   "Returns true only if date is a holiday in the given calendar"
-  (let [holidays (read-calendar calendar)]
-    (is-date-in-list? date holidays)))
+  [date calendar]
+  (cal/holiday? date (read-calendar calendar)))
 
-(defn non-business-day? [date & calendars]
+(defn non-business-day?
   "Returns true only if date is whether a weekend
   or a holiday in one of the given calendars"
-  (let [non-business-days (read-calendars (set (conj calendars WEEKEND-FILE-NAME)))]
-    (is-date-in-list? date non-business-days)))
+  [date & calendars]
+  (cal/non-business-day? date (read-calendars (set (conj calendars WEEKEND-FILE-NAME)))))
 
-(defn business-day? [date & calendars]
+(defn business-day?
   "Returns true only if date is not in a weekend
   and also not a holiday in any of the given calendars"
+  [date & calendars]
   (not (apply non-business-day? date calendars)))
+
+(defn apply-date-rules
+  "Returns a date after applying date rules to the supplied
+  date using the supplied calendars. A single date rule can be passed or
+  as a vector of date rules that are applied one after another left to right"
+  [date date-rule & calendars]
+  (println date date-rule calendars)
+  (dr/apply-date-rules date date-rule (read-calendars (set (conj calendars WEEKEND-FILE-NAME)))))

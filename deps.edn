@@ -3,10 +3,32 @@
            instaparse/instaparse {:mvn/version "1.4.10"}
            tick/tick             {:mvn/version "0.4.32"}
            easter-day/easter-day {:mvn/version "0.1.1"}}
- :aliases {:eftest  {:extra-paths ["test" "test-resources" "bin"]
-                     :extra-deps  {eftest/eftest {:mvn/version "0.5.9"}}}
+ :aliases {:kaocha
+           {:extra-paths ["test" "test-resources" "bin"]
+            :extra-deps {lambdaisland/kaocha {:mvn/version "1.70.1086"}}
+            :main-opts ["-m" "kaocha.runner"]}
 
-           :cljfmt  {:main-opts  ["-m" "cljfmt.main"]
-                     :extra-deps {lein-cljfmt/lein-cljfmt {:mvn/version "0.6.6"}}}
+           :repl/conjure
+           {:extra-deps {nrepl/nrepl       {:mvn/version "0.9.0"}
+                         cider/cider-nrepl {:mvn/version "0.28.4"}}
+            :main-opts  ["-m" "nrepl.cmdline"
+                         "--middleware" "[cider.nrepl/cider-middleware]"
+                         "--interactive"]}
+           :cljfmt
+           {:main-opts  ["-m" "cljfmt.main"]
+            :extra-deps {lein-cljfmt/lein-cljfmt {:mvn/version "0.6.6"}}}
 
-           :depstar {:extra-deps {seancorfield/depstar {:mvn/version "0.5.2"}}}}}
+           :depstar
+           {:extra-deps {seancorfield/depstar {:mvn/version "0.5.2"}}}
+
+           :build ;; added by neil
+           {:deps {io.github.clojure/tools.build {:git/tag "v0.8.3" :git/sha "0d20256"}
+                   slipset/deps-deploy {:mvn/version "0.2.0"}}
+            :ns-default build}
+
+           :test ;; added by neil
+           {:extra-paths ["test" "test-resources" "bin"]
+            :extra-deps {io.github.cognitect-labs/test-runner
+                         {:git/tag "v0.5.0" :git/sha "b3fd0d2"}}
+            :main-opts ["-m" "cognitect.test-runner"]
+            :exec-fn cognitect.test-runner.api/test}}}

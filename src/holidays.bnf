@@ -5,9 +5,9 @@ holiday = !comment-marker !include-marker name <'|'> holiday-definition <newline
 
 <holiday-definition> = date | expression
 
-<date> = ddmmm | ddmmmyyyy
+<date> =  ddmmm | ddmmmyyyy
 
-ddmmm = day-31 month-31 | day-30 month-30 | day-feb month-feb
+ddmmm = day-31 month-31 date-rules? | day-30 month-30 date-rules? | day-feb month-feb date-rules?
 <day-31> = day-30 | '31'
 <day-30> = day-feb | '30'
 <day-feb> = <'0'?> non-zero-digit |
@@ -21,6 +21,9 @@ ddmmm = day-31 month-31 | day-30 month-30 | day-feb month-feb
 
 ddmmmyyyy = ddmmm yyyy exception-marker?
 yyyy = #'\d{4}'
+
+<date-rule> = 'MF' | 'MP' | 'F' | 'P'
+date-rules = date-rule*
 
 expression = supported-calculated-date expression-operator expression-operand
 <supported-calculated-date> = 'E'

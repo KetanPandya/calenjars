@@ -51,10 +51,10 @@
     [{:name "Easter" :date (t/date "2018-04-01")}] 2018))
 
 (deftest should-generate-holidays-when-holidays-for-year-with-nested-includes
-  (= [{:name "Holiday from include-first" :date (t/date "2012-01-25")}
-      {:name "Holiday from include-second" :date (t/date "2012-01-30")}
-      {:name "Holiday from include-third" :date (t/date "2012-02-01")}]
-     (gen/holidays-for-year 2012 "test-resources/generate/include-first.hol")))
+  (is (= [{:name "Holiday from include-third" :date (t/date "2012-02-01")}
+          {:name "Holiday from include-second" :date (t/date "2012-01-30")}
+          {:name "Holiday from include-first" :date (t/date "2012-01-25")}]
+         (gen/holidays-for-year 2012 "test-resources/generate/include-first.hol"))))
 
 (deftest should-generate-holidays-when-holidays-for-year-with-exception-on-expression
   (are [expected year]

@@ -1,6 +1,7 @@
 (ns com.piposaude.calenjars.check
   (:require [instaparse.core :as insta]
             [clojure.edn :as edn]
+            [clojure.java.io :as io]
             [com.piposaude.calenjars.common :as common]
             [com.piposaude.calenjars.constants :refer [PARSER-GRAMMAR-FILENAME]])
   (:import (java.io FileNotFoundException)))
@@ -27,13 +28,13 @@
         included-filename (common/included-filename including-file included-holiday-name)]
     (if (common/holiday-was-included? result)
       (try
-        (boolean (clojure.java.io/reader included-filename))
+        (boolean (io/reader included-filename))
         (catch FileNotFoundException _
           false))
       true)))
 
 (defn valid-holiday-file? [filename]
-  (let [parser (insta/parser (clojure.java.io/resource PARSER-GRAMMAR-FILENAME))
+  (let [parser (insta/parser (io/resource PARSER-GRAMMAR-FILENAME))
         result (parser (slurp filename))]
     (and
      (not (insta/failure? result))
@@ -44,7 +45,7 @@
        (valid-holiday-file? (common/included-filename filename (second (first result))))))))
 
 (defn get-errors [filename]
-  (let [parser (insta/parser (clojure.java.io/resource PARSER-GRAMMAR-FILENAME))
+  (let [parser (insta/parser (io/resource PARSER-GRAMMAR-FILENAME))
         result (parser (slurp filename))]
     (merge
      {:parse-errors             (insta/get-failure result)
