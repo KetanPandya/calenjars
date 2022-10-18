@@ -3,7 +3,8 @@
            instaparse/instaparse {:mvn/version "1.4.10"}
            tick/tick             {:mvn/version "0.4.32"}
            easter-day/easter-day {:mvn/version "0.1.1"}}
- :aliases {:kaocha
+ :aliases {:neil {:project {:name dimension/calenjars :version "0.0.1"}}
+           :kaocha
            {:extra-paths ["test" "test-resources" "bin"]
             :extra-deps {lambdaisland/kaocha {:mvn/version "1.70.1086"}}
             :main-opts ["-m" "kaocha.runner"]}
