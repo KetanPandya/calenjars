@@ -12,6 +12,9 @@
                  (clojure "-M:nrepl")
                  (shell "rlwrap bb clojure -M:nrepl"))}
 
+  conjure {:doc "Start nREPL for conjure"
+                :task  (clojure "-M:repl/conjure")}
+
   install {:doc "Install jar"
            :task (clojure "-T:build install")}
 

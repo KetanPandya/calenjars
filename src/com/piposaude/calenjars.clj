@@ -61,5 +61,4 @@
   date using the supplied calendars. A single date rule can be passed or
   as a vector of date rules that are applied one after another left to right"
   [date date-rule & calendars]
-  (println date date-rule calendars)
   (dr/apply-date-rules date date-rule (read-calendars (set (conj calendars WEEKEND-FILE-NAME)))))
