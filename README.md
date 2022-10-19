@@ -10,8 +10,8 @@ arithmetics around non-business days, that you define yourself with a simple DSL
 Create a new clojure deps project:
 
 ```
-curl -LO https://raw.githubusercontent.com/piposaude/calenjars/0.5.0/new-calenjars-project.sh
-bash new-calenjars-project.sh
+curl -LO https://raw.githubusercontent.com/KetanPandya/calenjars/main/bb.edn
+bb gen-lib
 ```
 
 Next, follow the instructions in the README of the generated project to create
