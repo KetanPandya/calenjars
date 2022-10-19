@@ -1,0 +1,26 @@
+{:tasks
+ {:requires ([babashka.fs :as fs])
+
+  calendars {:doc "Generate calendars"
+             :task (let [calendars "calendars"]
+                     (println "Generating hoilidays in" calendars)
+                     (when (fs/exists? calendars) (fs/delete-tree calendars))
+                     (fs/create-dir calendars)
+                     (clojure (str "-M:calendars 80 calendars.hol/ " calendars)))}
+
+  install {:doc "Install jar"
+           :task (do (println "Installing jar") (clojure "-T:build install"))}
+
+  clean {:doc "Clean"
+         :task (do (println "Cleaning target") (clojure "-T:build clean"))}
+
+  jar {:doc "Build jar"
+       :task (do (println "building jar") (clojure "-T:build jar"))}
+
+  conjure {:doc "Start nREPL for conjure"
+                :task  (clojure "-M:repl/conjure")}
+
+  generate {:doc "Generate"
+            :task (do (run 'clean)
+                      (run 'calendars)
+                      (run 'install))}}}
