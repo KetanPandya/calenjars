@@ -1,5 +1,6 @@
 {:tasks
- {:requires ([babashka.fs :as fs])
+ {:requires ([babashka.fs :as fs]
+             [babashka.curl :as curl])
 
   test {:doc "Run tests"
         :task (apply clojure "-M:test" *command-line-args*)}
@@ -13,10 +14,33 @@
                  (shell "rlwrap bb clojure -M:nrepl"))}
 
   conjure {:doc "Start nREPL for conjure"
-                :task  (clojure "-M:repl/conjure")}
+           :task  (clojure "-M:repl/conjure")}
 
   install {:doc "Install jar"
            :task (clojure "-T:build install")}
 
   uber {:doc "Build uberjar"
-        :task (clojure "-T:build uber")}}}
+        :task (clojure "-T:build uber")}
+
+  gen-lib {:doc "Generate lib from template"
+           :task (do
+                   (println "---------------------")
+                   (println "New calenjars project")
+                   (println  "---------------------")
+                   (println "Enter a project name e.g. company-calendars:")
+                   (when-let [p (read-line)]
+                     (println "Enter a namespace")
+                     (when-let [n (read-line)]
+                       (println "Downloading template")
+                       (shell "curl -LO  https://raw.githubusercontent.com/KetanPandya/calenjars/main/resources/calenjars-template.zip")
+                       (println "Unziping template")
+                       (shell "unzip  calenjars-template.zip")
+                       (shell (str "mv calenjars-template " p))
+                       (let [file (str p "/calendars.clj")
+                             src (str p "/src")]
+                         (spit file  (clojure.string/replace (slurp file ) "lib-ns.lib-name" (str n "." p)))
+                         (shell (str "mkdir -p " src "/" n))
+                         (shell (str "mv " file " " src "/" n "/" p ".clj")))
+                       (let [file (str p "/deps.edn")]
+                         (spit file  (clojure.string/replace (slurp file ) "lib-ns/lib-name" (str n "/" p))))
+                       (println "Project successfully generated at" p))))}}}
