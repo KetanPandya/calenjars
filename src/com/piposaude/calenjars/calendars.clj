@@ -58,6 +58,17 @@
     (add-with-calendars date n non-business-days)
     (t/+ date (t/new-period n unit))))
 
+(defn date-range
+  "Returns a vector of all dates starting at start-date (adjusted by unit)
+  to end-date"
+  [start-date end-date unit non-business-days]
+  (let [start-date (relative-date-add start-date 0 unit non-business-days)]
+    (loop [d start-date dates [start-date]]
+      (let [nd (relative-date-add d 1 unit non-business-days)]
+        (if (t/> nd end-date)
+          dates
+          (recur nd (conj dates nd)))))))
+
 (defn weekend?
   "Returns true only if date is in a weekend"
   [date weekend-days]

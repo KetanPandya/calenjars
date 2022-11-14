@@ -34,6 +34,13 @@
   [date n unit & calendars]
   (cal/relative-date-add date n unit (read-calendars (set (conj calendars WEEKEND-FILE-NAME)))))
 
+
+(defn date-range
+  "Returns a vector of all dates starting at start-date (adjusted by unit)
+  to end-date"
+  [start-date end-date unit & calendars]
+  (cal/date-range start-date end-date unit (read-calendars (set (conj calendars WEEKEND-FILE-NAME)))))
+
 (defn weekend?
   "Returns true only if date is in a weekend"
   [date]

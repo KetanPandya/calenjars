@@ -8,6 +8,9 @@
 (defn relative-date-add [date n unit & calendars]
   (apply calenjars/relative-date-add  date n unit calendars))
 
+(defn date-range [start-date end-date unit & calendars]
+  (apply calenjars/date-range  start-date end-date unit calendars))
+
 (defn weekend? [date]
   (calenjars/weekend? date))
 

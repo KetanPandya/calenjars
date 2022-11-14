@@ -30,12 +30,15 @@
           :jar-file jar-file}))
 
 (defn install [_]
+  (println "Installing jar" jar-file)
   (jar {})
   (b/install {:basis basis
               :lib lib
               :version version
               :jar-file jar-file
-              :class-dir class-dir}))
+              :class-dir class-dir})
+  (println "Add to deps as:" lib "version" version)
+  )
 
 (defn uber [_]
   (clean nil)
