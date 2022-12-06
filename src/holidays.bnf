@@ -22,7 +22,7 @@ ddmmm = day-31 month-31 date-rules? | day-30 month-30 date-rules? | day-feb mont
 ddmmmyyyy = ddmmm yyyy exception-marker?
 yyyy = #'\d{4}'
 
-<date-rule> = 'MF' | 'MP' | 'F' | 'P'
+<date-rule> = 'MF' | 'MP' | 'F' | 'P' | '4THU'
 date-rules = date-rule*
 
 expression = supported-calculated-date expression-operator expression-operand
